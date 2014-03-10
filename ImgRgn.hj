@@ -1,0 +1,80 @@
+package frActors;
+
+import java.awt.image.BufferedImage;
+import java.awt.*; //BufferedImage and Color
+
+class ImgRgn{
+
+    private BufferedImage image;
+    private Rectangle rect;
+    private Color avgColor;
+    private ImgRgn match;
+
+    ImgRgn(BufferedImage img, Rectangle _rect){
+	image = img;
+	rect = _rect;
+	setAvgColor();
+	match = null;
+    }
+
+    ImgRgn(ImgRgn toPromote){
+	image = toPromote.image;
+	rect = toPromote.rect;
+	avgColor = toPromote.avgColor;
+	match = toPromote.match;
+    }
+
+    ImgRgn(Rectangle empty){
+	rect = empty;
+    }
+
+    public boolean isEmpty(){
+	return rect.isEmpty();
+    }
+    
+    public Rectangle getRect(){
+	return rect;
+    }
+
+    public void setAvgColor(){
+	int[] vals = new int[3];
+	/**
+	forall(point [X,Y] : [0:image.getWidth()-1, 0:image.getHeight()-1]){
+	    int color = image.getRGB(X,Y);
+	    vals[0] += (color >> 16) & 0xFF;
+	    vals[1] += (color >> 8) & 0xFF;
+	    vals[2] += color & 0xFF;
+	}
+	**/
+	for(int x=0; x<image.getWidth(); x++){
+	    for(int y=0; y<image.getHeight(); y++){
+		int color = image.getRGB(x,y);
+		vals[0] += (color >> 16) & 0xFF;
+		vals[1] += (color >> 8) & 0xFF;
+		vals[2] += color & 0xFF;
+	    }
+	}
+	
+	int pixCnt = image.getWidth() * image.getHeight();
+	avgColor = new Color(vals[0]/pixCnt, vals[1]/pixCnt, vals[2]/pixCnt);
+    }
+
+    public Color getAvgColor(){
+	return avgColor;
+    }
+
+    public ImgRgn getMatch(){
+	return match;
+    }
+
+    public void setMatch(ImgRgn _match){
+	match = _match;
+    }
+
+    public int computeMatchScore(ImgRgn tgt){
+	double redScore = Math.abs(this.getAvgColor().getRed() - tgt.getAvgColor().getRed());
+	double grnScore = Math.abs(this.getAvgColor().getGreen() - tgt.getAvgColor().getGreen());
+	double bluScore = Math.abs(this.getAvgColor().getBlue() - tgt.getAvgColor().getBlue());
+	return (int) (redScore + grnScore + bluScore);
+    }
+}

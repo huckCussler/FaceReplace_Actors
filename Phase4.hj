@@ -1,0 +1,37 @@
+package frActors;
+
+import hj.lang.Actor;
+import java.util.ArrayList;
+
+class Phase4 extends Actor<ImgRgn>{
+
+    private String name;
+    private ArrayList<ImgRgn> toMatch;
+    private int limit;
+    private int count;
+
+    Phase4(String _name){
+	name = _name;
+	toMatch = new ArrayList<ImgRgn>();
+	limit = Integer.MAX_VALUE;
+	count = 0;
+    }
+
+    public void process(ImgRgn imgRgn){
+	if(ImgRgn.isEmpty())
+	    limit = (int) imgRgn.getRect().getHeight();
+	else{
+	    
+	    
+    }
+}
+
+/**
+class Ph4Msg{
+
+    ArrayList<ImgRgn> imgRgns;
+    
+    Ph4Msg(){}
+
+
+    }**/

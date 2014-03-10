@@ -1,0 +1,44 @@
+package frActors;
+
+import hj.lang.Actor;
+import java.io.*;
+import java.util.*;
+import java.awt.Rectangle;
+
+/**
+ * The Phase1 Actor reads the text file that contains the coordinates for the rectangles
+ * that identify where each subimage is located within the larger, complete image.
+ * Each Rectangle Object is sent on to Phase2.
+ **/
+class Phase1 extends Actor<String>{
+
+    private String name;
+    private Phase2 consumer;
+    private int count;
+    
+    Phase1(String _name, Phase2 cons){
+	name = _name;
+	consumer = cons;
+	count = 0;
+    }
+
+    public void process(String dir){
+	String fileName = (name == "Source" ? "srcRct.txt" : "tgtRct.txt");
+	try{
+	    Scanner sc = new Scanner(new File(dir + fileName));
+	    while(sc.hasNextLine()){
+		String params = sc.nextLine();
+		String[] args = params.split("[ ,]+");
+		Rectangle rect = new Rectangle(Integer.parseInt(args[0]), Integer.parseInt(args[1]),
+					       Integer.parseInt(args[2]), Integer.parseInt(args[3]));
+		consumer.send(rect);
+		count++;
+	    }
+	    consumer.send(new Rectangle(-1, count));
+	}
+	catch(FileNotFoundException e){
+	    System.err.println("Rectangle file not found in Phase1");
+	}
+	exit();
+    }
+}

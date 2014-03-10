@@ -1,0 +1,31 @@
+This is a version of the FaceReplace program, a simple face-matching application, written in Java7 and Habanero
+Java (HJ) 1.3.1.  In order to run the code one must first have both Java7 and HJ installed.  HJ can be obtained
+at:
+
+https://upc-bugs.lbl.gov/~phargrov/sc12/PGAS-SC12/content/habanero/habanero/WIKI_RIC/CONFLUEN/DISPLAY/HABANERO/HJ_DOWNL.HTM
+
+Once installed, running this application should only require running 'make' from the root directory.  This will
+compile the source code and run the application.  Some things to note.  This version of FaceReplace is meant for
+running timing tests, so there is no GUI component attached.  Instead, the user will see some output that displays
+the results of running the application several times over on a given problem size.
+
+The default problem size, determined by the 'run' command in the Makefile, is 512 x 512.  This means that the 
+application will run using 512 subimages, each of size 512 x 512 pixels.  Other image sizes are provided in the
+
+rawImgsForTimingTests
+
+directory should one want to run the program with other image sizes.
+
+There are also the following options in the Makefile:
+
+runSingle -- runs the application utilizinig only one thread
+
+runStealHelp -- runs the application using the HJ settings for work-stealing workers that are set to help first.
+
+See the HJ documentation, especially the paper at
+
+www.cs.rice.edu/~vs3/PDF/hj-pppj11.pdf‎
+
+for more details on specifics about the HJ runtime.
+
+Please contact Tony Tuttle at the email address on my repo for any other questions, comments, suggestions, etc.

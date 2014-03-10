@@ -1,0 +1,38 @@
+package frActors;
+
+import hj.lang.Actor;
+import java.util.concurrent.*;
+import java.util.ArrayList;
+
+class Phase3 extends Actor<Ph3Msg>{
+
+    private ArrayList<ImgRgn> sources;
+    private ArrayList<ImgRgn> targets;
+    private int limit;
+    private int srcCount;
+    private int tgtCount;
+
+    Phase3(){
+	sources = new ArrayList<ImgRgn>();
+	targets = new ArrayList<ImgRgn>();
+	limit = Integer.MAX_VALUE;
+	srcCount = tgtCount = 0;
+    }
+
+    public void process(Ph3Msg msg){
+	if(msg.getType() == "setLimit")
+	    limit = msg.getLimit();
+	else if(msg.getType() == "Source"){
+	    sources.add(msg.getImgRgn());
+	    srcCount++;
+	}
+	else{
+	    targets.add(msg.getImgRgn());
+	    tgtCount++;
+	}
+	if(srcCount == limit && tgtCount == limit){
+	    new MatchMaker(sources, targets);
+	    exit();
+	}
+    }
+}

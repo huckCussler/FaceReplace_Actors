@@ -1,0 +1,37 @@
+package frActors;
+
+import java.util.*;
+import java.util.concurrent.*;
+
+class SrcRgn extends ImgRgn{
+
+    private PriorityQueue<ImgRgn> matchPool;
+
+    SrcRgn(ImgRgn toPromote, ArrayList<ImgRgn> targets){
+	super(toPromote);
+	matchPool = new PriorityQueue<ImgRgn>(targets.size(), new MatchComparator());
+	matchPool.addAll(targets);
+    }
+
+    public int getMPSize(){
+	return matchPool.size();
+    }
+
+    public ImgRgn getNextBestMatch(){
+	return matchPool.poll();
+    }
+
+    public int computeMatchScore(ImgRgn tgt){
+	double redScore = Math.abs(this.getAvgColor().getRed() - tgt.getAvgColor().getRed());
+	double grnScore = Math.abs(this.getAvgColor().getGreen() - tgt.getAvgColor().getGreen());
+	double bluScore = Math.abs(this.getAvgColor().getBlue() - tgt.getAvgColor().getBlue());
+	return (int) (redScore + grnScore + bluScore);
+    }
+
+    class MatchComparator implements Comparator<ImgRgn>{
+
+	public int compare(ImgRgn tgt1, ImgRgn tgt2){
+	    return SrcRgn.this.computeMatchScore(tgt1) - SrcRgn.this.computeMatchScore(tgt2);
+	}
+    }
+}

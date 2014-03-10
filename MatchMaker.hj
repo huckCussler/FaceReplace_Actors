@@ -1,0 +1,65 @@
+package frActors;
+
+import java.util.concurrent.*;
+import java.util.*;
+
+class MatchMaker{
+
+    private ConcurrentLinkedQueue<SrcRgn> sources;
+    private ArrayList<ImgRgn> targets;
+    private ConcurrentHashMap<SrcRgn, ImgRgn> matches;
+    private int n;
+
+    MatchMaker(ArrayList<ImgRgn> srcs, ArrayList<ImgRgn> tgts){
+	sources = new ConcurrentLinkedQueue<SrcRgn>();
+	targets = tgts;
+	n = srcs.size();
+	/**
+	for(int i=0; i<n; i++)
+	    sources.add(new SrcRgn(srcs.get(i), targets));
+	**/
+	forall(point[p] : [0:n-1])
+	    sources.add(new SrcRgn(srcs.get(p), targets));
+	matches = makeMatches();
+	//printMatches();
+    }
+    
+    private ConcurrentHashMap<SrcRgn, ImgRgn> makeMatches(){
+	ConcurrentHashMap<SrcRgn, ImgRgn> matches = new ConcurrentHashMap<SrcRgn, ImgRgn>();
+	while(!sources.isEmpty()){
+	    SrcRgn curr = sources.peek();
+	    ImgRgn matchWanted = curr.getNextBestMatch();
+	    if(matchWanted.getMatch() == null){
+		setMatch(curr, matchWanted);
+		matches.put(sources.poll(), matchWanted);
+	    }
+	    else if(curr.computeMatchScore(matchWanted) < matchWanted.getMatch().computeMatchScore(matchWanted)){
+		sources.add((SrcRgn)matchWanted.getMatch());
+		matches.remove(matchWanted.getMatch());
+		unsetMatch(matchWanted.getMatch(), matchWanted);
+		setMatch(curr, matchWanted);
+		matches.put(sources.poll(), matchWanted);
+	    }
+	}
+	return matches;
+    }
+
+    private void setMatch(SrcRgn src, ImgRgn tgt){
+	src.setMatch(tgt);
+	tgt.setMatch(src);
+    }
+
+    private void unsetMatch(ImgRgn src, ImgRgn tgt){
+	src.setMatch(null);
+	tgt.setMatch(null);
+    }
+    
+    private void printMatches(){
+	for(Enumeration<SrcRgn> e = matches.keys(); e.hasMoreElements();){
+	    SrcRgn src = e.nextElement();
+	    ImgRgn tgt = matches.get(src);
+	    System.out.println("SRC RECT: " + src.getRect());
+	    System.out.println("TGT RECT: " + tgt.getRect());
+	}
+    }
+}

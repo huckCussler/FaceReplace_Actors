@@ -1,0 +1,56 @@
+package frActors;
+
+import hj.lang.Actor;
+import java.io.*;
+import java.util.*;
+import java.awt.image.*;
+import javax.imageio.ImageIO;
+import java.awt.Rectangle;
+
+/**
+ * The Phase2 Actor receives messages which are Rectangle Objects.  From each of these, the Actor
+ * locates the corresponding sub-image within the larger image and creates new ImgRgn Objects from
+ * this information.  These messages are sent on to Phase3.
+ **/
+class Phase2 extends Actor<Rectangle>{
+
+    private String name;
+    private String dir;
+    private BufferedImage bigImg;
+    private String fileName;
+    private Phase3 consumer;
+    private int limit;
+    private int count;
+
+    Phase2(String _name, String _dir, Phase3 cons){ 
+	name = _name;
+	dir = _dir;
+	consumer = cons;
+	fileName = (name == "Source" ? "srcImg.jpg" : "tgtImg.jpg");
+	limit = Integer.MAX_VALUE;
+	count = 0;
+	try{
+	    bigImg = ImageIO.read(new File(dir + fileName));
+	}
+	catch(IOException e){
+	    System.err.println("Image file not found in Phase2");
+	}
+    }
+
+    public void process(Rectangle rect){
+	if(rect.isEmpty())
+	    limit = (int) rect.getHeight();
+	else{
+	    async{
+		BufferedImage img = bigImg.getSubimage((int)rect.getX(), (int)rect.getY(),
+						       (int)rect.getWidth(), (int)rect.getHeight());
+		consumer.send(new Ph3Msg(name, new ImgRgn(img, rect)));
+	    }
+	    count++;
+	}
+	if(count == limit){
+	    consumer.send(new Ph3Msg(count));
+	    exit();
+	}
+    }
+}

@@ -1,0 +1,36 @@
+package frActors;
+
+/**
+ * The entry point for our application; creates and starts each Actor.
+ **/
+public class Main{
+
+    public static void main(String[] args){
+	long[] times = new long[8];
+	for(int i=0; i<8; i++){
+	    long startTime = System.currentTimeMillis();
+	    finish{
+		Phase3 matcher = new Phase3();
+		Phase2 srcImgRgns = new Phase2("Source", args[0], matcher);
+		Phase2 tgtImgRgns = new Phase2("Target", args[0], matcher);
+		Phase1 srcRects = new Phase1("Source", srcImgRgns);
+		Phase1 tgtRects = new Phase1("Target", tgtImgRgns);
+		srcRects.start();
+		tgtRects.start();
+		srcImgRgns.start();
+		tgtImgRgns.start();
+		matcher.start();
+		srcRects.send(args[0]);
+		tgtRects.send(args[0]);
+	    }
+	    long endTime = System.currentTimeMillis();
+	    long elapsedTime = endTime - startTime;
+	    System.out.println("elapsed time: " + elapsedTime);
+	    times[i] = elapsedTime;
+	}
+	long sumOfTimes = 0;
+	for(int i=1; i<times.length; i++)
+	    sumOfTimes += times[i];
+	System.out.println("avg time: " + (sumOfTimes / 7));
+    }
+}

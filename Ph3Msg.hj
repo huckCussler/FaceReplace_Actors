@@ -1,0 +1,30 @@
+package frActors;
+
+class Ph3Msg{
+
+    private String type;
+    private ImgRgn imgRgn;
+    private int limit;
+
+    Ph3Msg(String _type, ImgRgn _imgRgn){
+	type = _type;
+	imgRgn = _imgRgn;
+    }
+
+    Ph3Msg(int _limit){
+	type = "setLimit";
+	limit = _limit;
+    }
+    
+    public String getType(){
+	return type;
+    }
+
+    public int getLimit(){
+	return limit;
+    }
+
+    public ImgRgn getImgRgn(){
+	return imgRgn;
+    }
+}
